@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Young Serif', serif;
+    background-color: #FCFCFC;
+    color: #030303;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer utilities {
+  .font-extrabold-display {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+  }
+  
+  .squircle {
+    corner-shape: squircle;
+  }
+}
+

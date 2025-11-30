@@ -1,15 +1,35 @@
 import Button from '../components/Button';
 import IconOpen from '../components/IconOpen';
 import IconVolumeOff from '../components/IconVolumeOff';
+import { useMediaScrollAnimation, useMediaWithFadeOutAnimation } from '../hooks/useScrollAnimation';
 
 export default function MediaSection({ 
   showControls = true,
-  image = null 
+  image = null,
+  appearEarly = false,
+  fadeOut = false
 }) {
+  // Use fade-out animation for sections that need to fade before footer
+  const animationHook = fadeOut ? useMediaWithFadeOutAnimation : useMediaScrollAnimation;
+  
+  const { sectionRef, mediaRef } = animationHook({
+    startScale: 0.85,
+    endScale: 1,
+    // Project case media appears earlier, hero media uses standard timing
+    triggerStart: appearEarly ? "top 130%" : "top 95%",
+    triggerEnd: appearEarly ? "top 70%" : "top 40%",
+  });
+
   return (
-    <section className="flex items-center justify-center h-[900px] w-full">
-      <div className="flex items-center justify-center gap-6 h-[900px] w-[1440px] overflow-hidden">
-        <div className="relative flex-1 h-full min-h-px min-w-px bg-gray-10 rounded-[56px] squircle">
+    <section 
+      ref={sectionRef}
+      className="flex items-center justify-center min-h-screen w-full -mt-[10vh]"
+    >
+      <div className="flex items-center justify-center w-[1440px] p-6">
+        <div 
+          ref={mediaRef}
+          className="relative w-full bg-gray-10 rounded-[56px] squircle will-change-transform aspect-[16/10]"
+        >
           {/* Image placeholder or actual image */}
           {image && (
             <img 
@@ -38,4 +58,3 @@ export default function MediaSection({
     </section>
   );
 }
-

@@ -25,5 +25,14 @@
   .squircle {
     corner-shape: squircle;
   }
+  
+  .will-change-transform {
+    will-change: transform, opacity;
+  }
+}
+
+/* ScrollTrigger pinned section fixes */
+.pin-spacer {
+  overflow: visible !important;
 }
 

@@ -1,14 +1,28 @@
 import Button from '../components/Button';
+import { useMediaScrollAnimation } from '../hooks/useScrollAnimation';
 
 export default function Footer() {
+  const { sectionRef, mediaRef } = useMediaScrollAnimation({
+    startScale: 0.63,
+    endScale: 1,
+    triggerStart: "top 130%",
+    triggerEnd: "top 26%",
+  });
+
   return (
-    <footer className="flex flex-col gap-3 h-[1040px] w-full p-3">
+    <footer 
+      ref={sectionRef}
+      className="flex flex-col gap-3 min-h-screen w-full p-3 mt-[26vh]"
+    >
       {/* Black Box */}
-      <div className="flex-1 flex flex-col items-center bg-brand-black rounded-card min-h-px min-w-px pt-0 pb-12">
+      <div 
+        ref={mediaRef}
+        className="flex-1 flex flex-col items-center bg-brand-black rounded-card squircle min-h-px min-w-px pt-0 pb-12 will-change-transform"
+      >
         {/* Content Container */}
         <div className="flex-1 flex flex-col items-center justify-center gap-[38px] w-full min-h-px min-w-px">
           {/* Headline */}
-          <div className="font-serif text-h1-mobile text-brand-white text-center tracking-[-0.25px] leading-[56px]">
+          <div className="font-serif text-h1 text-brand-white text-center tracking-[-0.335px]">
             <p>Say less.</p>
             <p>Mean more.</p>
           </div>
@@ -40,4 +54,3 @@ export default function Footer() {
     </footer>
   );
 }
-

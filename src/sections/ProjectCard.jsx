@@ -1,13 +1,24 @@
 import IconDot from '../components/IconDot';
+import { useTextScrollAnimation } from '../hooks/useScrollAnimation';
 
 export default function ProjectCard({ 
   title, 
   image, 
   services = [] 
 }) {
+  const { sectionRef, contentRef } = useTextScrollAnimation({
+    pinDuration: "85%",  // Long enough for text + logo to fully fade before media overlaps
+  });
+
   return (
-    <section className="flex flex-col items-center justify-center h-[900px] w-full">
-      <div className="flex flex-col items-center gap-[38px] px-[294px] w-full">
+    <section 
+      ref={sectionRef}
+      className="flex flex-col items-center justify-center h-[85vh] w-full pointer-events-none"
+    >
+      <div 
+        ref={contentRef}
+        className="relative z-20 flex flex-col items-center gap-[38px] px-[294px] w-full will-change-transform pointer-events-auto"
+      >
         {/* Project Logo */}
         <div className="relative w-[100px] h-[100px] rounded-[42px] squircle overflow-hidden">
           <img 
@@ -39,4 +50,3 @@ export default function ProjectCard({
     </section>
   );
 }
-

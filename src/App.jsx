@@ -1,3 +1,4 @@
+import React, { Children, cloneElement, isValidElement } from 'react';
 import Hero from './sections/Hero';
 import ProjectCard from './sections/ProjectCard';
 import MediaSection from './sections/MediaSection';
@@ -7,37 +8,67 @@ import Footer from './sections/Footer';
 const youngLionsImage = "/images/Young Lions.jpg";
 const eveeImage = "/images/Evee.jpg";
 
+// Wrapper that automatically applies fadeOut to the last MediaSection before Footer
+function SectionsWrapper({ children }) {
+  const childArray = Children.toArray(children);
+  
+  // Find the index of Footer
+  const footerIndex = childArray.findIndex(
+    (child) => isValidElement(child) && child.type === Footer
+  );
+  
+  // Find the last MediaSection before Footer
+  let lastMediaIndex = -1;
+  for (let i = footerIndex - 1; i >= 0; i--) {
+    const child = childArray[i];
+    if (isValidElement(child) && child.type === MediaSection) {
+      lastMediaIndex = i;
+      break;
+    }
+  }
+  
+  // Clone children, adding fadeOut to the last MediaSection before Footer
+  return childArray.map((child, index) => {
+    if (index === lastMediaIndex && isValidElement(child)) {
+      return cloneElement(child, { fadeOut: true, key: index });
+    }
+    return child;
+  });
+}
+
 export default function App() {
   return (
     <div className="bg-brand-white flex flex-col items-start w-full">
-      {/* Hero Section */}
-      <Hero />
-      
-      {/* First Media Section - with controls */}
-      <MediaSection showControls={true} />
-      
-      {/* Young Lions Competition */}
-      <ProjectCard 
-        title="Young Lions Competition"
-        image={youngLionsImage}
-        services={["Brand Strategy", "Copywriting", "Design"]}
-      />
-      
-      {/* Second Media Section - without controls */}
-      <MediaSection showControls={false} />
-      
-      {/* Evee. AI Interviewer */}
-      <ProjectCard 
-        title="Evee. AI Interviewer"
-        image={eveeImage}
-        services={["Brand Strategy", "Copywriting", "Film-making", "Design"]}
-      />
-      
-      {/* Third Media Section - without controls */}
-      <MediaSection showControls={false} />
-      
-      {/* Footer */}
-      <Footer />
+      <SectionsWrapper>
+        {/* Hero Section */}
+        <Hero />
+        
+        {/* First Media Section - with controls */}
+        <MediaSection showControls={true} />
+        
+        {/* Young Lions Competition */}
+        <ProjectCard 
+          title="Young Lions Competition"
+          image={youngLionsImage}
+          services={["Brand Strategy", "Copywriting", "Design"]}
+        />
+        
+        {/* Second Media Section - without controls, appears early after project card */}
+        <MediaSection showControls={false} appearEarly={true} />
+        
+        {/* Evee. AI Interviewer */}
+        <ProjectCard 
+          title="Evee. AI Interviewer"
+          image={eveeImage}
+          services={["Brand Strategy", "Copywriting", "Film-making", "Design"]}
+        />
+        
+        {/* Third Media Section - without controls, appears early after project card */}
+        <MediaSection showControls={false} appearEarly={true} />
+        
+        {/* Footer */}
+        <Footer />
+      </SectionsWrapper>
     </div>
   );
 }

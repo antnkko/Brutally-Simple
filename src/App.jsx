@@ -43,8 +43,8 @@ export default function App() {
         {/* Hero Section */}
         <Hero />
         
-        {/* First Media Section - with controls */}
-        <MediaSection showControls={true} />
+        {/* First Media Section - Video type: sound button only in bottom-right */}
+        <MediaSection type="video" />
         
         {/* Young Lions Competition */}
         <ProjectCard 
@@ -53,8 +53,8 @@ export default function App() {
           services={["Brand Strategy", "Copywriting", "Design"]}
         />
         
-        {/* Second Media Section - without controls, appears early after project card */}
-        <MediaSection showControls={false} appearEarly={true} />
+        {/* Second Media Section - Case Cover: Explore + Sound buttons centered */}
+        <MediaSection type="case-cover" appearEarly={true} />
         
         {/* Evee. AI Interviewer */}
         <ProjectCard 
@@ -63,8 +63,8 @@ export default function App() {
           services={["Brand Strategy", "Copywriting", "Film-making", "Design"]}
         />
         
-        {/* Third Media Section - without controls, appears early after project card */}
-        <MediaSection showControls={false} appearEarly={true} />
+        {/* Third Media Section - Case Cover: Explore + Sound buttons centered */}
+        <MediaSection type="case-cover" appearEarly={true} />
         
         {/* Footer */}
         <Footer />

@@ -3,8 +3,13 @@ import IconOpen from '../components/IconOpen';
 import IconVolumeOff from '../components/IconVolumeOff';
 import { useMediaScrollAnimation, useMediaWithFadeOutAnimation } from '../hooks/useScrollAnimation';
 
+/**
+ * MediaSection component with different layout types:
+ * - "video": Sound button only, positioned in bottom-right (for hero section media)
+ * - "case-cover": Explore + Sound buttons, centered at bottom (for project case media)
+ */
 export default function MediaSection({ 
-  showControls = true,
+  type = "case-cover", // "video" | "case-cover"
   image = null,
   appearEarly = false,
   fadeOut = false
@@ -12,12 +17,26 @@ export default function MediaSection({
   // Use fade-out animation for sections that need to fade before footer
   const animationHook = fadeOut ? useMediaWithFadeOutAnimation : useMediaScrollAnimation;
   
+  // Last section (fadeOut) should fade out later, but scale in normally
+  const getAnimationConfig = () => {
+    if (fadeOut) {
+      return {
+        triggerStart: "top 130%",   // Scale in as it enters (same as appearEarly)
+        triggerEnd: "top 70%",
+        fadeStart: "top 0%",        // Fade out starts later
+        fadeEnd: "top -100%",
+      };
+    }
+    if (appearEarly) {
+      return { triggerStart: "top 130%", triggerEnd: "top 70%" };
+    }
+    return { triggerStart: "top 95%", triggerEnd: "top 40%" };
+  };
+
   const { sectionRef, mediaRef } = animationHook({
     startScale: 0.85,
     endScale: 1,
-    // Project case media appears earlier, hero media uses standard timing
-    triggerStart: appearEarly ? "top 130%" : "top 95%",
-    triggerEnd: appearEarly ? "top 70%" : "top 40%",
+    ...getAnimationConfig(),
   });
 
   return (
@@ -25,10 +44,10 @@ export default function MediaSection({
       ref={sectionRef}
       className="flex items-center justify-center min-h-screen w-full -mt-[10vh]"
     >
-      <div className="flex items-center justify-center w-[1440px] p-6">
+      <div className="flex items-center justify-center w-[1440px] gap-6 overflow-hidden">
         <div 
           ref={mediaRef}
-          className="relative w-full bg-gray-10 rounded-[56px] squircle will-change-transform aspect-[16/10]"
+          className="relative w-full h-[900px] bg-gray-10 rounded-[56px] squircle will-change-transform"
         >
           {/* Image placeholder or actual image */}
           {image && (
@@ -39,8 +58,15 @@ export default function MediaSection({
             />
           )}
           
-          {/* Button Controls */}
-          {showControls && (
+          {/* Video type: Sound button only in bottom-right */}
+          {type === "video" && (
+            <button className="absolute bottom-12 right-12 flex items-center justify-center w-[52px] h-[52px] bg-gray-20 rounded-full overflow-hidden">
+              <IconVolumeOff className="text-brand-black" />
+            </button>
+          )}
+          
+          {/* Case Cover type: Explore + Sound buttons centered at bottom */}
+          {type === "case-cover" && (
             <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex items-center gap-3">
               <Button 
                 variant="black" 

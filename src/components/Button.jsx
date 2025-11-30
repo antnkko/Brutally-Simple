@@ -8,7 +8,7 @@ export default function Button({
   icon,
   ...props 
 }) {
-  const baseStyles = "inline-flex items-center justify-center gap-[14px] px-6 pt-[11px] pb-[12px] font-extrabold-display text-button tracking-[0.18px]";
+  const baseStyles = "inline-flex items-center justify-center gap-[14px] px-6 pt-[11px] pb-[12px] font-extrabold-display text-button tracking-[0px]";
   
   const variants = {
     black: "bg-brand-black text-brand-white",

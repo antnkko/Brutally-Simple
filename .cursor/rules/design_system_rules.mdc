@@ -1,0 +1,376 @@
+# Brutally Simple Design System Rules
+
+This document defines the design system for integrating Figma designs via the Model Context Protocol (MCP).
+
+---
+
+## 1. Token Definitions
+
+### Colors
+
+Design tokens are defined in `tailwind.config.js` under `theme.extend.colors`:
+
+```javascript
+colors: {
+  'brand-black': '#030303',    // Primary black - text, buttons, backgrounds
+  'brand-white': '#FCFCFC',    // Primary white - backgrounds, text on dark
+  'gray-10': '#EDEDED',        // Lightest gray - media placeholder backgrounds
+  'gray-20': '#CCCCCC',        // Light gray - separators, disabled states
+  'gray-50': '#808080',        // Medium gray - secondary text (socials)
+  'gray-60': '#666666',        // Dark gray - labels, metadata text
+}
+```
+
+**Figma Variable Mapping:**
+| Figma Variable | Tailwind Class | Hex Value |
+|---------------|----------------|-----------|
+| `Black` | `brand-black` | `#030303` |
+| `White` | `brand-white` | `#FCFCFC` |
+| `Gray/10` | `gray-10` | `#EDEDED` |
+| `Gray/20` | `gray-20` | `#CCCCCC` |
+| `Gray/50` | `gray-50` | `#808080` |
+| `Gray/60` | `gray-60` | `#666666` |
+
+### Typography
+
+Typography tokens in `tailwind.config.js`:
+
+```javascript
+fontFamily: {
+  'serif': ['"Young Serif"', 'serif'],           // Headlines, body text
+  'display': ['"Inter Display"', 'Inter', 'sans-serif'], // Buttons
+},
+fontSize: {
+  'h1': ['67px', { lineHeight: '72px', letterSpacing: '-0.335px' }],
+  'h1-mobile': ['50px', { lineHeight: '56px', letterSpacing: '-0.25px' }],
+  'button': ['18px', { lineHeight: '1.55', letterSpacing: '0.18px' }],
+  'label': ['18px', { lineHeight: '1.55', letterSpacing: '0.18px' }],
+}
+```
+
+**Figma Typography Mapping:**
+| Figma Style | Usage | Font | Size | Weight | Line Height | Letter Spacing |
+|-------------|-------|------|------|--------|-------------|----------------|
+| `Desktop/H1` | Headlines | Young Serif | 67px | 400 | 72px | -0.5% |
+| `Mobile/H1` | Mobile headlines | Young Serif | 50px | 400 | 56px | -0.5% |
+| `Desktop/H2` | Subheadlines | Young Serif | 25px | 400 | 1.25 | -0.5% |
+| `Desktop/Body Text` | Body copy | Inter Display | 18px | 400 | 1.55 | 2.5% |
+| `Desktop/Button Label` | Buttons | Inter Display | 18px | 800 | 1.55 | 0 |
+| `Desktop/Text Label` | Labels, metadata | Young Serif | 18px | 400 | 1.55 | 1% |
+
+### Border Radius
+
+```javascript
+borderRadius: {
+  'card': '56px',      // Large cards, media containers, footer box
+  'image': '42px',     // Project logos, thumbnails
+  'pill': '9999px',    // Buttons (capsule shape)
+}
+```
+
+### Spacing Patterns
+
+Common spacing values used throughout:
+- `gap-3` (12px) - Between buttons, small elements
+- `gap-6` (24px) - Between section elements
+- `gap-[38px]` - Between hero/card content blocks
+- `p-3` (12px) - Page padding
+- `px-6` - Button horizontal padding
+- `pt-[11px] pb-[12px]` - Button vertical padding
+
+---
+
+## 2. Component Library
+
+### Location
+Components are in `src/components/`:
+- `Button.jsx` - Primary button component with variants
+- `IconDot.jsx`, `IconOpen.jsx`, `IconCross.jsx` - Icon components
+- `IconVolumeOn.jsx`, `IconVolumeOff.jsx` - Audio control icons
+
+### Export Pattern
+All components are exported via barrel file `src/components/index.js`:
+
+```javascript
+export { default as Button } from './Button';
+export { default as IconDot } from './IconDot';
+// ... etc
+```
+
+### Button Component API
+
+```jsx
+<Button 
+  variant="black"    // "black" | "white" | "gray"
+  href="/link"       // Optional - renders as <a> if provided
+  icon={<IconOpen />} // Optional - icon displayed after text
+  className=""       // Additional classes
+>
+  Button Text
+</Button>
+```
+
+**Button Variants:**
+- `black` - `bg-brand-black text-brand-white` (primary)
+- `white` - `bg-brand-white text-brand-black` (on dark backgrounds)
+- `gray` - `bg-gray-20 text-brand-black` (secondary)
+
+### Squircle Implementation
+The project uses `@squircle-js/react` for iOS-style smooth corners:
+
+```jsx
+import { Squircle } from '@squircle-js/react';
+
+<Squircle 
+  cornerRadius={9999}     // Capsule for buttons
+  cornerSmoothing={1}     // Maximum smoothing
+  className="..."
+>
+  Content
+</Squircle>
+```
+
+CSS class `.squircle` is also available for native corner-shape support.
+
+---
+
+## 3. Frameworks & Libraries
+
+| Category | Technology | Version |
+|----------|------------|---------|
+| UI Framework | React | 18.2.0 |
+| Build Tool | Vite | 5.1.4 |
+| Styling | Tailwind CSS | 3.4.1 |
+| Animation | GSAP | 3.13.0 |
+| Smooth Corners | @squircle-js/react | 1.2.18 |
+
+---
+
+## 4. Asset Management
+
+### Image Storage
+Static assets are stored in `/public/images/`:
+```
+public/
+  images/
+    Evee.jpg
+    Young Lions.jpg
+```
+
+### Image Reference Pattern
+```jsx
+// Reference images from public folder
+const youngLionsImage = "/images/Young Lions.jpg";
+const eveeImage = "/images/Evee.jpg";
+
+// Usage in components
+<img 
+  src={image} 
+  alt={title}
+  className="absolute inset-0 w-full h-full object-cover rounded-[42px] squircle"
+/>
+```
+
+### Image Styling Patterns
+- Project logos: `w-[100px] h-[100px] rounded-[42px] squircle overflow-hidden`
+- Full-bleed media: `absolute inset-0 w-full h-full object-cover`
+
+---
+
+## 5. Icon System
+
+### Location
+Icons are stored as individual React components in `src/components/`:
+
+### Icon Component Pattern
+```jsx
+export default function IconName({ className = "" }) {
+  return (
+    <svg 
+      className={className}
+      xmlns="http://www.w3.org/2000/svg" 
+      width="24" 
+      height="24" 
+      viewBox="0 0 24 24" 
+      fill="none"
+    >
+      <path 
+        d="..." 
+        stroke="currentColor"  // Uses currentColor for theming
+        strokeWidth="3"
+      />
+    </svg>
+  );
+}
+```
+
+### Icon Usage
+```jsx
+import { IconOpen, IconDot } from '../components';
+
+// In buttons
+<Button icon={<IconOpen className="text-brand-white" />}>
+  Explore
+</Button>
+
+// As separators
+<IconDot className="text-gray-20" />
+```
+
+### Available Icons
+| Icon | Purpose | Style |
+|------|---------|-------|
+| `IconDot` | List separator | Filled dot |
+| `IconOpen` | Expand/explore action | Stroke arrows |
+| `IconCross` | Close action | Stroke X |
+| `IconVolumeOn` | Sound on | Stroke speaker |
+| `IconVolumeOff` | Sound muted | Stroke speaker |
+
+---
+
+## 6. Styling Approach
+
+### CSS Methodology
+- **Primary**: Tailwind CSS utility classes
+- **Custom utilities**: Defined in `src/index.css` via `@layer utilities`
+- **Global styles**: Base styles in `@layer base`
+
+### Custom CSS Utilities
+```css
+@layer utilities {
+  .font-extrabold-display {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+  }
+  
+  .squircle {
+    corner-shape: squircle;
+  }
+  
+  .will-change-transform {
+    will-change: transform, opacity;
+  }
+}
+```
+
+### Base Styles
+```css
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Young Serif', serif;
+    background-color: #FCFCFC;
+    color: #030303;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+```
+
+### Responsive Design
+- Desktop-first approach
+- Mobile breakpoint: Uses `h1-mobile` for smaller screens
+- Container width: `w-[1440px]` for media sections
+
+---
+
+## 7. Project Structure
+
+```
+src/
+├── App.jsx              # Main app, section composition
+├── main.jsx             # Entry point
+├── index.css            # Global styles, Tailwind imports
+├── components/          # Reusable UI components
+│   ├── index.js         # Barrel export
+│   ├── Button.jsx
+│   └── Icon*.jsx        # Icon components
+├── sections/            # Page sections
+│   ├── index.js         # Barrel export
+│   ├── Hero.jsx
+│   ├── ProjectCard.jsx
+│   ├── MediaSection.jsx
+│   └── Footer.jsx
+└── hooks/               # Custom React hooks
+    └── useScrollAnimation.js
+```
+
+### Section Components Pattern
+Each section follows a consistent structure:
+
+```jsx
+export default function SectionName({ props }) {
+  // Use scroll animation hook
+  const { sectionRef, contentRef } = useTextScrollAnimation({
+    pinDuration: "85%",
+  });
+
+  return (
+    <section 
+      ref={sectionRef}
+      className="flex flex-col items-center justify-center h-[85vh] w-full"
+    >
+      <div ref={contentRef} className="...">
+        {/* Content */}
+      </div>
+    </section>
+  );
+}
+```
+
+---
+
+## 8. Animation System
+
+### GSAP ScrollTrigger Hooks
+Located in `src/hooks/useScrollAnimation.js`:
+
+| Hook | Purpose | Usage |
+|------|---------|-------|
+| `useTextScrollAnimation` | Pin & fade text sections | Hero, ProjectCard |
+| `useMediaScrollAnimation` | Scale media on scroll | MediaSection |
+| `useMediaWithFadeOutAnimation` | Scale + fade out | Last MediaSection |
+| `useFooterScrollAnimation` | Scale footer box | Footer |
+
+### Animation Configuration
+```jsx
+// Text sections
+useTextScrollAnimation({
+  pinDuration: "85%",    // How long section stays pinned
+  scrubDuration: 0.5,    // Smoothing factor
+});
+
+// Media sections
+useMediaScrollAnimation({
+  startScale: 0.85,      // Initial scale
+  endScale: 1,           // Final scale
+  triggerStart: "top 95%",
+  triggerEnd: "top 40%",
+});
+```
+
+---
+
+## 9. Figma to Code Guidelines
+
+### When Implementing Figma Designs:
+
+1. **Colors**: Always use Tailwind token classes (`text-brand-black`, `bg-gray-10`)
+2. **Typography**: Use predefined font sizes (`text-h1`, `text-button`, `text-label`)
+3. **Buttons**: Use the `<Button>` component with appropriate variant
+4. **Icons**: Create new icons following the `Icon*.jsx` pattern
+5. **Spacing**: Use Tailwind spacing utilities; match Figma values with closest Tailwind class
+6. **Border Radius**: Use `rounded-card` (56px), `rounded-image` (42px), or `rounded-full`
+7. **Smooth Corners**: Apply `.squircle` class or use `<Squircle>` component
+
+### Component Creation Checklist:
+- [ ] Export from barrel file (`components/index.js` or `sections/index.js`)
+- [ ] Accept `className` prop for composition
+- [ ] Use design tokens from Tailwind config
+- [ ] Include `will-change-transform` for animated elements
+- [ ] Follow existing naming conventions
+
+

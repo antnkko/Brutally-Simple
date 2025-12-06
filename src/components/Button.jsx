@@ -1,5 +1,3 @@
-import { Squircle } from '@squircle-js/react';
-
 export default function Button({ 
   children, 
   variant = "black", 
@@ -8,7 +6,7 @@ export default function Button({
   icon,
   ...props 
 }) {
-  const baseStyles = "inline-flex items-center justify-center gap-[14px] px-6 pt-[11px] pb-[12px] font-extrabold-display text-button tracking-[0px]";
+  const baseStyles = "inline-flex items-center justify-center gap-[14px] px-6 pt-[11px] pb-[12px] font-extrabold-display text-button tracking-[0px] cursor-pointer rounded-full";
   
   const variants = {
     black: "bg-brand-black text-brand-white",
@@ -25,24 +23,17 @@ export default function Button({
     </>
   );
   
-  // Capsule with more pronounced continuous corner smoothing
-  const squircleProps = {
-    cornerRadius: 9999,
-    cornerSmoothing: 1,
-    className: combinedClassName,
-  };
-  
   if (href) {
     return (
-      <Squircle as="a" href={href} {...squircleProps} {...props}>
+      <a href={href} className={combinedClassName} {...props}>
         {content}
-      </Squircle>
+      </a>
     );
   }
   
   return (
-    <Squircle as="button" {...squircleProps} {...props}>
+    <button className={combinedClassName} {...props}>
       {content}
-    </Squircle>
+    </button>
   );
 }

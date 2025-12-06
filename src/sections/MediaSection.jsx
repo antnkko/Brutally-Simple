@@ -1,7 +1,8 @@
+import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
 import IconOpen from '../components/IconOpen';
 import IconVolumeOff from '../components/IconVolumeOff';
-import { useMediaScrollAnimation, useMediaWithFadeOutAnimation } from '../hooks/useScrollAnimation';
+import { useMediaScrollAnimation, useMediaWithFadeOutAnimation, useBlurFadeIn } from '../hooks/useScrollAnimation';
 
 /**
  * MediaSection component with different layout types:
@@ -12,8 +13,13 @@ export default function MediaSection({
   type = "case-cover", // "video" | "case-cover"
   image = null,
   appearEarly = false,
-  fadeOut = false
+  fadeOut = false,
+  projectSlug = null, // slug for navigation (e.g., "young-lions")
+  enableBlurFadeIn = false, // Enable blur fade-in animation (for case study pages)
+  dataAppear = null, // data-appear value for staggered page-load animation
+  isScrollBlurred = false, // Blur during scroll-to-footer
 }) {
+  const navigate = useNavigate();
   // Use fade-out animation for sections that need to fade before footer
   const animationHook = fadeOut ? useMediaWithFadeOutAnimation : useMediaScrollAnimation;
   
@@ -39,22 +45,35 @@ export default function MediaSection({
     ...getAnimationConfig(),
   });
 
+  // Blur fade-in for scroll entrance (only when enabled)
+  const { ref: blurRef, isVisible } = useBlurFadeIn({ threshold: 0.1 });
+
+  const blurClasses = enableBlurFadeIn 
+    ? `blur-fade-in ${isVisible ? 'is-visible' : ''}` 
+    : '';
+
+  const scrollBlurClasses = `scroll-blur-section ${isScrollBlurred ? 'scroll-blur-active' : ''}`;
+
   return (
     <section 
-      ref={sectionRef}
-      className="flex items-center justify-center min-h-screen w-full -mt-[10vh]"
+      ref={(el) => {
+        sectionRef.current = el;
+        if (enableBlurFadeIn) blurRef.current = el;
+      }}
+      {...(dataAppear && { 'data-appear': dataAppear })}
+      className={`flex items-center justify-center min-h-screen w-full -mt-[10vh] ${blurClasses} ${scrollBlurClasses}`}
     >
       <div className="flex items-center justify-center w-[1440px] gap-6 overflow-hidden">
         <div 
           ref={mediaRef}
-          className="relative w-full h-[900px] bg-gray-10 rounded-[56px] squircle will-change-transform"
+          className="relative w-full h-[900px] bg-gray-10 rounded-[36px] will-change-transform"
         >
           {/* Image placeholder or actual image */}
           {image && (
             <img 
               src={image} 
               alt="Case study"
-              className="absolute inset-0 w-full h-full object-cover rounded-[56px] squircle"
+              className="absolute inset-0 w-full h-full object-cover rounded-[36px]"
             />
           )}
           
@@ -71,6 +90,7 @@ export default function MediaSection({
               <Button 
                 variant="black" 
                 icon={<IconOpen className="text-brand-white" />}
+                onClick={() => projectSlug && navigate(`/${projectSlug}`)}
               >
                 Explore
               </Button>

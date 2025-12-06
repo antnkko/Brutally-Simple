@@ -1,9 +1,44 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
+
+/**
+ * Hook for blur fade-in animation triggered by scroll
+ * Uses Intersection Observer to trigger once when element enters viewport
+ */
+export function useBlurFadeIn(options = {}) {
+  const ref = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+  
+  const {
+    threshold = 0.1,
+    rootMargin = "0px 0px -10% 0px",
+  } = options;
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(element); // Only trigger once
+        }
+      },
+      { threshold, rootMargin }
+    );
+
+    observer.observe(element);
+
+    return () => observer.disconnect();
+  }, [threshold, rootMargin]);
+
+  return { ref, isVisible };
+}
 
 /**
  * Hook for text sections (Hero, ProjectCard)

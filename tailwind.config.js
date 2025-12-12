@@ -9,10 +9,12 @@ export default {
       colors: {
         'brand-black': '#030303',
         'brand-white': '#FCFCFC',
+        'brand-yellow': '#FFFF02',
         'gray-10': '#EDEDED',
         'gray-20': '#CCCCCC',
         'gray-50': '#808080',
         'gray-60': '#666666',
+        'gray-80': '#333333',
       },
       fontFamily: {
         'serif': ['"Young Serif"', 'serif'],

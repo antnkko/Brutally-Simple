@@ -30,14 +30,15 @@ src/
 │   └── YoungLionsPage.jsx  # Case study page (template for others)
 │
 ├── sections/           # Page sections
-│   ├── Hero.jsx        # Hero section with pinned scroll animation
+│   ├── Hero.jsx        # Hero section with pinned scroll animation + typewriter effect
 │   ├── ProjectCard.jsx # Project intro cards with fade-out scroll
 │   ├── MediaSection.jsx # Media containers (video/image/case-cover)
 │   ├── ParagraphSection.jsx # Text content sections
 │   └── Footer.jsx      # Footer with scale animation
 │
 ├── hooks/              # Custom React hooks
-│   └── useScrollAnimation.js  # GSAP scroll animation hooks
+│   ├── useScrollAnimation.js  # GSAP scroll animation hooks
+│   └── useTypewriter.js       # Typewriter text animation hook
 │
 ├── App.jsx             # Router setup and main layout
 ├── main.jsx            # React entry point
@@ -50,7 +51,7 @@ src/
 
 The site uses GSAP ScrollTrigger for sophisticated scroll-driven animations:
 
-- **Hero Section**: Pinned section with fade-out on scroll
+- **Hero Section**: Pinned section with fade-out on scroll + typewriter animation for prefix text
 - **Project Cards**: Text sections that fade out as you scroll past
 - **Media Sections**: Scale animations as content enters viewport
 - **Footer**: Scale-up animation with pinning
@@ -65,6 +66,12 @@ The site uses GSAP ScrollTrigger for sophisticated scroll-driven animations:
 - `useMediaWithFadeOutAnimation()` - Scales up then fades out
 - `useFooterScrollAnimation()` - Footer scale animation
 - `useBlurFadeIn()` - Intersection Observer-based blur fade-in
+
+#### Typewriter Animation Hook (`useTypewriter.js`)
+
+- `useTypewriter()` - Types out text character by character with configurable speed and delay
+  - Used in Hero section to type "Make it " before "Brutally Simple" appears
+  - Configurable: `text`, `speed` (ms per character), `delay` (ms), `enabled` (boolean)
 
 #### CSS Animation System (`index.css`)
 
@@ -157,6 +164,22 @@ const { sectionRef, contentRef } = useTextScrollAnimation({
 <div data-appear="3">Content</div>  // Delay: 160ms
 ```
 
+#### Typewriter Animation
+
+```jsx
+const prefixTyped = useTypewriter({
+  text: 'Make it ',
+  speed: 80,              // milliseconds per character
+  delay: 1130,            // delay before starting (fade-in duration + extra delay)
+  enabled: true,          // enable/disable the animation
+});
+
+<h1>
+  <span>{prefixTyped}</span>
+  <span>Brutally Simple</span>
+</h1>
+```
+
 #### Media Section Types
 
 - `type="video"` - Video placeholder with sound button
@@ -167,6 +190,8 @@ const { sectionRef, contentRef } = useTextScrollAnimation({
 ## Animation Timing
 
 - **Blur Fade-In Duration**: 630ms (customizable via CSS variables)
+- **Typewriter Speed**: 80ms per character (Hero section)
+- **Typewriter Delay**: 1130ms (630ms fade-in + 500ms additional delay)
 - **Scroll Blur Duration**: 800ms (matches smooth scroll easing)
 - **Button Morph**: 350ms
 - **Stagger Delays**: 80ms increments

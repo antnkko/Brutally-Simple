@@ -5,6 +5,7 @@ import { useMediaScrollAnimation, useBlurFadeIn } from '../hooks/useScrollAnimat
 export default function Footer({ enableBlurFadeIn = false, onLogoClick }) {
   const [emailCopied, setEmailCopied] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [hoveredSocial, setHoveredSocial] = useState(null);
 
   const handleCopyEmail = async () => {
     try {
@@ -77,9 +78,37 @@ export default function Footer({ enableBlurFadeIn = false, onLogoClick }) {
         </div>
         
         {/* Socials Container */}
-        <div className="flex items-center gap-6 font-serif text-label text-gray-50 tracking-[0.18px]">
-          <span>Instagram</span>
-          <span>LinkedIn</span>
+        <div className="flex items-center gap-6 font-serif text-label tracking-[0.18px]">
+          <a
+            href="#"
+            onClick={(e) => e.preventDefault()}
+            onMouseEnter={() => setHoveredSocial('instagram')}
+            onMouseLeave={() => setHoveredSocial(null)}
+            className={`cursor-pointer transition-colors duration-350 ${
+              hoveredSocial === 'instagram'
+                ? 'text-brand-yellow'
+                : hoveredSocial === 'linkedin'
+                ? 'text-gray-80'
+                : 'text-gray-50'
+            }`}
+          >
+            Instagram
+          </a>
+          <a
+            href="#"
+            onClick={(e) => e.preventDefault()}
+            onMouseEnter={() => setHoveredSocial('linkedin')}
+            onMouseLeave={() => setHoveredSocial(null)}
+            className={`cursor-pointer transition-colors duration-350 ${
+              hoveredSocial === 'linkedin'
+                ? 'text-brand-yellow'
+                : hoveredSocial === 'instagram'
+                ? 'text-gray-80'
+                : 'text-gray-50'
+            }`}
+          >
+            LinkedIn
+          </a>
         </div>
       </div>
       

@@ -9,13 +9,22 @@ export default function Hero({ enableAppearAnimation = true, onWorkWithUsClick }
 
   const fadeInDuration = 630; // matches --appear-duration from CSS
   const typingSpeed = 80; // milliseconds per character
-  const prefixDelay = 500; // additional delay after fade-in completes
-  const prefixText = 'Make it ';
+  const prefixDelay = 700; // additional delay after fade-in completes
 
+  // Phase 1: Type "Make it " (starts after fade-in + delay)
   const prefixTyped = useTypewriter({
-    text: prefixText,
+    text: 'Make it ',
     speed: typingSpeed,
-    delay: fadeInDuration + prefixDelay,
+    delay: fadeInDuration + prefixDelay,  // 630 + 500 = 1130ms
+    enabled: enableAppearAnimation,
+  });
+
+  // Phase 2: Type "Brutally " (starts after "Make it " completes + delay)
+  const brutallyDelay = 1000; // delay before "Brutally" appears
+  const brutallyTyped = useTypewriter({
+    text: 'Brutally ',
+    speed: typingSpeed,
+    delay: fadeInDuration + prefixDelay + (8 * typingSpeed) + brutallyDelay,  // 1130 + 640 + 750 = 2520ms
     enabled: enableAppearAnimation,
   });
 
@@ -34,7 +43,8 @@ export default function Hero({ enableAppearAnimation = true, onWorkWithUsClick }
           className="font-serif text-h1 text-brand-black text-center tracking-[-0.335px]"
         >
           <span>{prefixTyped}</span>
-          <span>Brutally Simple</span>
+          <span>{brutallyTyped}</span>
+          <span>Simple.</span>
         </h1>
         <div {...(enableAppearAnimation && { 'data-appear': '3' })}>
           <Button variant="black" onClick={onWorkWithUsClick}>
